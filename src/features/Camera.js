@@ -9,11 +9,25 @@ export const Picture = ({ previous, setPage, setPrevious }) => {
 
   useEffect(() => {
     const requestCameraPermission = async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasCameraPermission(status === 'granted');
+      try {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        console.log("Camera permission status:", status); // Log the status
+        setHasCameraPermission(status === 'granted');
+      } catch (error) {
+        console.error("Error requesting camera permission:", error);
+        setHasCameraPermission(false); // Set to false if there's an error
+      }
     };
     requestCameraPermission();
   }, []);
+
+  // useEffect(() => {
+  //   const requestCameraPermission = async () => {
+  //     const { status } = await Camera.requestCameraPermissionsAsync();
+  //     setHasCameraPermission(status === 'granted');
+  //   };
+  //   requestCameraPermission();
+  // }, []);
 
   const takePicture = async () => {
     if (cameraRef.current) {
