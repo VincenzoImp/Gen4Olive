@@ -1,19 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { Camera } from 'expo-camera';
+import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 
 export const Picture = ({ previous, setPage, setPrevious }) => {
-  const [hasCameraPermission, setHasCameraPermission] = useState(null);
-  const [image, setImage] = useState(null);
-  const cameraRef = useRef(null);
-
+  const [permission, requestCameraPermission] = useCameraPermissions();
   useEffect(() => {
-    const requestCameraPermission = async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasCameraPermission(status === 'granted');
-    };
     requestCameraPermission();
   }, []);
+
+  const [image, setImage] = useState(null);
+  const cameraRef = useRef(null);
 
   const takePicture = async () => {
     if (cameraRef.current) {
@@ -33,9 +29,11 @@ export const Picture = ({ previous, setPage, setPrevious }) => {
     }
   };
 
-  if (hasCameraPermission === null) {
+  if (!permission) {
     return <View />;
-  } else if (hasCameraPermission === false) {
+  }
+
+  if (!permission.granted) {
     return <Text>No access to camera</Text>;
   }
 
@@ -53,7 +51,7 @@ export const Picture = ({ previous, setPage, setPrevious }) => {
         </TouchableOpacity>
       </View>
       {!image ? (
-        <Camera style={styles.camera} ref={cameraRef} />
+        <CameraView ref={cameraRef} style={styles.camera} type={CameraType} />
       ) : (
         <Image source={{ uri: image }} style={styles.camera} />
       )}
