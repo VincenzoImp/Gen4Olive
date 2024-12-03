@@ -12,7 +12,9 @@
         {
           "cameraPermission": "allow"
         }
-      ]
+      ],
+      "expo-asset",
+      "expo-font"
     ],
     "splash": {
       "image": "./assets/splash.png",

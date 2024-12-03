@@ -44,6 +44,34 @@ export const Paragraph = ({ info, api }) => {
       sectionData = [];
   }
 
+  const getColor = (index, selectedFraction) => {
+    if (index <= selectedFraction) {
+      // Calcola il colore in base all'indice
+      const red = Math.round(255 * (1 - index / 5)); // Rosso diminuisce
+      const green = Math.round(200 * (index / 5)); // Verde aumenta
+      const blue = 0; // Blu rimane 0
+      return `rgb(${red}, ${green}, ${blue})`; // Colore dal rosso al giallo al verde
+    }
+    return 'gray'; // Colore grigio per i pulsanti non selezionati
+  };
+
+  const renderButtons = (selectedFraction) => {
+    const buttons = [];
+    for (let i = 1; i <= 5; i++) {
+      buttons.push(
+        <View
+          key={i}
+          style={[
+            styles.button,
+            { backgroundColor: getColor(i, selectedFraction) },
+          ]}
+        >
+        </View>
+      );
+    }
+    return buttons;
+  };
+
   return (
     <View>
       <Text style={styles.paragraphTitle}>{sectionTitle}</Text>
@@ -51,7 +79,13 @@ export const Paragraph = ({ info, api }) => {
         {sectionData.map(([key, value]) => (
           <View key={key} style={styles.row}>
             <Text style={styles.key}>{key}:</Text>
-            <Text style={styles.value}>{value}</Text>
+            {key !== 'country_of_origin' && key !== 'fruit_size' ? 
+              <Text style={styles.value}>{value}</Text> 
+            : 
+            <View style={[styles.value, { flexDirection: 'row'}]}>
+              {renderButtons(value)}
+            </View>
+            }
           </View>
         ))}
       </View>
@@ -82,5 +116,10 @@ const styles = StyleSheet.create({
   value: {
     flex: 1,
   },
+  button: {
+    width: 10,
+    height: 10,
+    margin: 1,
+    borderRadius: 0,
+  },
 });
-
